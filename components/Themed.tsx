@@ -3,6 +3,8 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
+import React, { useState } from "react";
+import { FlatList } from "react-native";
 import {
   StyleSheet,
   Text as DefaultText,
@@ -32,6 +34,16 @@ type ThemeProps = {
   darkColor?: string;
 };
 
+export type products = {
+  product: product[];
+};
+export type product = {
+  brand_name: string;
+  category: string;
+  id: number;
+  name: string;
+};
+
 export type TextProps = ThemeProps & DefaultText["props"];
 export type ViewProps = ThemeProps & DefaultView["props"];
 
@@ -52,17 +64,27 @@ export function View(props: ViewProps) {
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
 
-export function CardView(props: ViewProps) {
+export function CardView(props: ViewProps, h: boolean, data: products) {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     "cardBackground"
   );
 
-  return (
-    <DefaultTouchableOpacity
+  return h == true ? (
+    <FlatList
+      data={data.product}
+      horizontal
       style={[{ backgroundColor }, styles.card, style]}
-      {...otherProps}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item }) => <Text>{item.name}</Text>}
+    />
+  ) : (
+    <FlatList
+      data={data.product}
+      style={[{ backgroundColor }, styles.card, style]}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item }) => <Text>{item.name}</Text>}
     />
   );
 }
